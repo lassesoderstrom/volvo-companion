@@ -3,13 +3,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1">
-  <title>Volvo Companion - Login Callback</title>
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Volvo Companion Login</title>
 </head>
 <body>
   <h2>Volvo Companion</h2>
-  <p>OAuth callback page is ready.</p>
-  <p>You can close this page for now.</p>
+  <p id="message">Preparing login callback...</p>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+
+    // Remove the authorization code from browser history.
+    history.replaceState(null, "", window.location.pathname);
+
+    const code = params.get("code");
+    const state = params.get("state");
+    const error = params.get("error");
+
+    if (code && state && !error) {
+      const localUrl = new URL(
+        "http://127.0.0.1:8766/callback"
+      );
+      localUrl.searchParams.set("code", code);
+      localUrl.searchParams.set("state", state);
+
+      document.getElementById("message").textContent =
+        "Returning to Volvo Companion on your Mac...";
+
+      window.location.replace(localUrl.toString());
+    } else {
+      document.getElementById("message").textContent =
+        "No active Volvo login response. " +
+        "You can close this page.";
+    }
+  </script>
 </body>
 </html>
